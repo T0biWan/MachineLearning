@@ -146,7 +146,7 @@ public class DataExampleSet {
 
         for (String classification: classifications) {
             int occurence = occurences.get(classification);
-            if (occurence) > majority) {
+            if (occurence > majority) {
                 classificationOfMajority = classification;
                 majority = occurence;
             }
@@ -181,13 +181,24 @@ public class DataExampleSet {
     public double getinformationGain(int nr) {
         //TODO: Implementieren Sie diese Methode!
         double informationGain = 0;
+        double completeAmount = getSize();
         double entropyBeforeSplit = getEntropy();
         double entropyOfAllSubsets = 0;
         HashMap<Object, DataExampleSet> subsets = splitAtAttribute(nr);
         Set<Object> keys = subsets.keySet();
         for (Object key: keys) {
-            entropyOfAllSubsets += subsets.get(key).getEntropy();
+            // M = completeAmount
+            // M A b = amountOfKeyInSubset
+            // M A b / M = dividedAmounts
+            // Key = values for a column
+            // Attribute = column
+
+            double amountOfKeyInSubset = subsets.get(key).getSize();
+            double dividedAmounts = amountOfKeyInSubset/completeAmount;
+
+            entropyOfAllSubsets += dividedAmounts * subsets.get(key).getEntropy();
         }
+
         informationGain = entropyBeforeSplit - entropyOfAllSubsets;
 
         return informationGain;
@@ -201,6 +212,18 @@ public class DataExampleSet {
      */
     public int getAttributeWithLargestInformationGain() {
         //TODO: Implementieren Sie diese Methode!
+        int attributeWithLargestInformationGain = 0;
+        double largestInformationGain = 0;
+
+        for(int i = 0; i < getSize(); i++) {
+            double informationGain = getinformationGain(i);
+            if (informationGain > largestInformationGain) {
+                largestInformationGain = informationGain;
+                attributeWithLargestInformationGain = i;
+            }
+        }
+
+        return attributeWithLargestInformationGain;
     }
     
     
